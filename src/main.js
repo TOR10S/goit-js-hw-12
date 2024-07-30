@@ -1,17 +1,23 @@
+import searchImagesByQuery from "./js/pixabay-api";
+import { createImages, clearImages, scrollDown } from "./js/render-functions";
+
 // Описаний у документації
 import iziToast from "izitoast";
 // Додатковий імпорт стилів
 import "izitoast/dist/css/iziToast.min.css";
 // Описаний у документації
 
-
-import searchImagesByQuery from "./js/pixabay-api";
-import { createImages, clearImages } from "./js/render-functions";
-
 const form = document.querySelector(".gallery-form");
 const input = document.querySelector(".input-for-gallery");
 const loader = document.querySelector(".loader");
+const button = document.querySelector(".load");
+const message = document.querySelector(".bottom")
 
+let page = 1;
+let wordFromStart = "";
+let currentWord = "";
+
+button.addEventListener("click", handleClick)
 form.addEventListener("submit", handleSubmit)
 
 function handleSubmit(event) {
@@ -19,7 +25,9 @@ function handleSubmit(event) {
     event.preventDefault();
     loader.classList.remove("hiden")
     let wordForSearch = input.value.trim();
-    searchImagesByQuery(`${wordForSearch}`).then((data) => {if (data.total === 0) {
+    wordFromStart = wordForSearch;
+    currentWord = wordForSearch;
+    searchImagesByQuery(`${wordForSearch}`, page).then((data) => {if (data.total === 0) {
       iziToast.error({
         position: "topRight",
           message: 'Sorry, there are no images matching your search query. Please try again!',
@@ -33,9 +41,43 @@ function handleSubmit(event) {
       });
       loader.classList.add("hiden")
       return;
-  } else {createImages(data)}
+  }  else {
+    createImages(data);    
+    button.classList.remove("hiden");
+
+  }
     loader.classList.add("hiden")
   });
-    
+
 }
 
+  function handleClick(event) {
+  if (wordFromStart !== currentWord) {
+    page = 1;
+  }
+  page += 1;
+  loader.classList.remove("hiden")
+  searchImagesByQuery(`${wordFromStart}`, page).then((data) => {
+    if (page * 15 >= data.totalHits) {
+      button.classList.add("hidden");
+      iziToast.info({
+          position: "topRight",
+          message: "We're sorry, but you've reached the end of search results.",
+      });
+      loader.classList.add("hiden")
+      button.classList.add("hiden")
+      message.classList.add("show-text")
+      return;
+  }
+    createImages(data)
+    scrollDown()
+    loader.classList.add("hiden");
+  }).catch(error => {
+    iziToast.error({
+        position: "topRight",
+        message: error,
+    });
+    loader.classList.add("hiden");
+});
+  
+}

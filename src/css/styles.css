@@ -121,6 +121,16 @@
     75%, 100%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,100% 100%,100% 100%)}
 }
 
+.load-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 36px 0;
+}
+
 .hiden {
   display: none;
+}
+
+.show-text {
+  display: inline;
 }
