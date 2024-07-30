@@ -24,6 +24,7 @@ function handleSubmit(event) {
     clearImages()
     event.preventDefault();
     loader.classList.remove("hiden")
+    message.classList.remove("show-text")
     let wordForSearch = input.value.trim();
     wordFromStart = wordForSearch;
     currentWord = wordForSearch;
