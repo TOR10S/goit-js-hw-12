@@ -28,6 +28,15 @@ function handleSubmit(event) {
     let wordForSearch = input.value.trim();
     wordFromStart = wordForSearch;
     currentWord = wordForSearch;
+      page = 1;
+    if (wordForSearch === '') {
+      iziToast.error({
+        position: "topRight",
+          message: 'Please fill the input',
+      });
+      loader.classList.add("hiden")
+      return;
+  }  
     searchImagesByQuery(`${wordForSearch}`, page).then((data) => {if (data.total === 0) {
       iziToast.error({
         position: "topRight",
@@ -35,19 +44,20 @@ function handleSubmit(event) {
       });
       loader.classList.add("hiden")
       return;
-    } if (wordForSearch === '') {
-      iziToast.error({
-        position: "topRight",
-          message: 'Please fill the input',
-      });
-      loader.classList.add("hiden")
-      return;
-  }  else {
+    } else {
     createImages(data);    
     button.classList.remove("hiden");
-
   }
+  if (data.hits.length < 15) {
+    button.classList.add("hiden");
+    iziToast.info({
+      position: "topRight",
+      message: "We're sorry, but you've reached the end of search results.",
+  });
+  message.classList.add("show-text");
+}
     loader.classList.add("hiden")
+    
   });
 
 }
@@ -59,7 +69,7 @@ function handleSubmit(event) {
   page += 1;
   loader.classList.remove("hiden")
   searchImagesByQuery(`${wordFromStart}`, page).then((data) => {
-    if (page * 15 >= data.totalHits) {
+    if (data.hits.length < 15) {
       button.classList.add("hidden");
       iziToast.info({
           position: "topRight",
@@ -68,7 +78,6 @@ function handleSubmit(event) {
       loader.classList.add("hiden")
       button.classList.add("hiden")
       message.classList.add("show-text")
-      return;
   }
     createImages(data)
     scrollDown()
