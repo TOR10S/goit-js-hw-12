@@ -79,10 +79,9 @@ function handleSubmit(event) {
     scrollDown()
     loader.classList.add("hiden");
   }).catch(error => {
-    console.error(error); // Виведення детальної інформації про помилку
     iziToast.error({
         position: "topRight",
-        message: error.message, // Інформативне повідомлення
+        message: error.message,
     });
     loader.classList.add("hiden");
 });
