@@ -11,17 +11,19 @@ const form = document.querySelector(".gallery-form");
 const input = document.querySelector(".input-for-gallery");
 const loader = document.querySelector(".loader");
 const button = document.querySelector(".load");
+const message = document.querySelector(".bottom")
 
 let page = 1;
 let wordFromStart = "";
 
-button.addEventListener("click", handleClick)
 form.addEventListener("submit", handleSubmit)
+button.addEventListener("click", handleClick);
 
 function handleSubmit(event) {
     clearImages()
     event.preventDefault();
-    loader.classList.remove("hiden")
+    loader.classList.remove("hiden");
+    message.classList.remove("show-text")
     let wordForSearch = input.value.trim();
     wordFromStart = wordForSearch;
     page = 1;
@@ -47,6 +49,7 @@ function handleSubmit(event) {
   }
   if (data.hits.length < 15) {
     button.classList.add("hiden");
+    message.classList.add("show-text")
     iziToast.info({
       position: "topRight",
       message: "We're sorry, but you've reached the end of search results.",
@@ -65,17 +68,17 @@ function handleSubmit(event) {
   searchImagesByQuery(`${wordFromStart}`, page).then((data) => {
     if (data.hits.length < 15) {
       button.classList.add("hidden");
+      message.classList.add("show-text")
       iziToast.info({
           position: "topRight",
           message: "We're sorry, but you've reached the end of search results.",
       });
       loader.classList.add("hiden")
       button.classList.add("hiden")
-  }
+  } else {button.classList.remove("hiden")}
     createImages(data)
     scrollDown()
     loader.classList.add("hiden");
-    button.classList.remove("hiden")
   }).catch(error => {
     iziToast.error({
         position: "topRight",
