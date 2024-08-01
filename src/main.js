@@ -15,7 +15,6 @@ const message = document.querySelector(".bottom")
 
 let page = 1;
 let wordFromStart = "";
-let currentWord = "";
 
 button.addEventListener("click", handleClick)
 form.addEventListener("submit", handleSubmit)
@@ -27,8 +26,7 @@ function handleSubmit(event) {
     message.classList.remove("show-text")
     let wordForSearch = input.value.trim();
     wordFromStart = wordForSearch;
-    currentWord = wordForSearch;
-      page = 1;
+    page = 1;
     if (wordForSearch === '') {
       iziToast.error({
         position: "topRight",
@@ -37,7 +35,8 @@ function handleSubmit(event) {
       loader.classList.add("hiden")
       return;
   }  
-    searchImagesByQuery(`${wordForSearch}`, page).then((data) => {if (data.total === 0) {
+    searchImagesByQuery(`${wordForSearch}`, page).then((data) => {
+    if (data.total === 0) {
       iziToast.error({
         position: "topRight",
           message: 'Sorry, there are no images matching your search query. Please try again!',
@@ -63,9 +62,6 @@ function handleSubmit(event) {
 }
 
   function handleClick(event) {
-  if (wordFromStart !== currentWord) {
-    page = 1;
-  }
   page += 1;
   loader.classList.remove("hiden")
   searchImagesByQuery(`${wordFromStart}`, page).then((data) => {
@@ -83,9 +79,10 @@ function handleSubmit(event) {
     scrollDown()
     loader.classList.add("hiden");
   }).catch(error => {
+    console.error(error); // Виведення детальної інформації про помилку
     iziToast.error({
         position: "topRight",
-        message: error,
+        message: error.message, // Інформативне повідомлення
     });
     loader.classList.add("hiden");
 });
