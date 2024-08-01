@@ -11,7 +11,6 @@ const form = document.querySelector(".gallery-form");
 const input = document.querySelector(".input-for-gallery");
 const loader = document.querySelector(".loader");
 const button = document.querySelector(".load");
-const message = document.querySelector(".bottom")
 
 let page = 1;
 let wordFromStart = "";
@@ -23,7 +22,6 @@ function handleSubmit(event) {
     clearImages()
     event.preventDefault();
     loader.classList.remove("hiden")
-    message.classList.remove("show-text")
     let wordForSearch = input.value.trim();
     wordFromStart = wordForSearch;
     page = 1;
@@ -35,7 +33,7 @@ function handleSubmit(event) {
       loader.classList.add("hiden")
       return;
   }  
-    searchImagesByQuery(`${wordForSearch}`, page).then((data) => {
+    searchImagesByQuery(`${wordForSearch}`, page).then(async (data) => {
     if (data.total === 0) {
       iziToast.error({
         position: "topRight",
@@ -44,7 +42,7 @@ function handleSubmit(event) {
       loader.classList.add("hiden")
       return;
     } else {
-    createImages(data);    
+    await createImages(data);    
     button.classList.remove("hiden");
   }
   if (data.hits.length < 15) {
@@ -53,7 +51,6 @@ function handleSubmit(event) {
       position: "topRight",
       message: "We're sorry, but you've reached the end of search results.",
   });
-  message.classList.add("show-text");
 }
     loader.classList.add("hiden")
     
@@ -64,6 +61,7 @@ function handleSubmit(event) {
   function handleClick(event) {
   page += 1;
   loader.classList.remove("hiden")
+  button.classList.add("hiden")
   searchImagesByQuery(`${wordFromStart}`, page).then((data) => {
     if (data.hits.length < 15) {
       button.classList.add("hidden");
@@ -73,11 +71,11 @@ function handleSubmit(event) {
       });
       loader.classList.add("hiden")
       button.classList.add("hiden")
-      message.classList.add("show-text")
   }
     createImages(data)
     scrollDown()
     loader.classList.add("hiden");
+    button.classList.remove("hiden")
   }).catch(error => {
     iziToast.error({
         position: "topRight",
